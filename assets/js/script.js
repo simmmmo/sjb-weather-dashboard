@@ -3,12 +3,7 @@
 var userFormEl = document.querySelector('#user-form');
 var cityButtonsEl = document.querySelector('#city-buttons');
 var cityInputEl = document.querySelector('#username');
-// var forcastContainerEl = document.querySelector('#forcast-results');
-var repoSearchTerm = document.querySelector('#repo-search-term');
-var repoSearchTemp = document.querySelector('#repo-search-temp');
-var repoSearchWind = document.querySelector('#repo-search-wind');
-var repoSearchHumidity = document.querySelector('#repo-search-humidity');
-var repoSearchIcon = document.querySelector('#repo-search-icon');
+
 var resultsWeather = document.querySelector('#card-weather');
 
 
@@ -18,51 +13,35 @@ currentListEl.classList = 'current-list';
 
 var APIKey = "aa82d8e67049c580a964573e4eb0645c";
 
-var saveListEl = {};
-
 var cityStoredList = [];
-// function init() {
-//   // Get stored todos from localStorage
-//   var storedHighScores = JSON.parse(localStorage.getItem("todos"));
-
-//   // If todos were retrieved from localStorage, update the todos array to it
-//   if (storedHighScores !== null) {
-//     highScores = storedHighScores;
-//   }
-
-//   // This is a helper function that will render todos to the DOM
-//   renderTodos();
-// }
-
 
 function storeCity (saveName) {
-  
   cityStoredList = JSON.parse(localStorage.getItem("cityList"));
-  cityStoredList.push(saveName);
+  if (cityStoredList.indexOf(saveName) == -1) {
+    cityStoredList.push(saveName);
+    createBtn (saveName);
+  }
   localStorage.setItem("cityList", JSON.stringify(cityStoredList));
 };
 
-function renderStoredcity () {
 
+function renderStoredcity () {
   cityButtonsEl.innerHTML = "";
 
- console.log(cityStoredList);
- for (var i = 0; i < cityStoredList.length; i++) {
-   var cityBtnName = cityStoredList[i];
-   var addBtn = document.createElement('button');
-   addBtn.textContent = cityBtnName;
-   addBtn.setAttribute("class", "btn");
-   addBtn.setAttribute("data-language", cityBtnName);
-   cityButtonsEl.prepend(addBtn);
-   console.log(addBtn)
+  console.log(cityStoredList);
+    for (var i = 0; i < cityStoredList.length; i++) {
+    var cityBtnName = cityStoredList[i];
+    var addBtn = document.createElement('button');
+    addBtn.textContent = cityBtnName;
+    addBtn.setAttribute("class", "btn");
+    addBtn.setAttribute("data-language", cityBtnName);
+    cityButtonsEl.prepend(addBtn);
+    console.log(addBtn);
  }
 }
 
 
 function init() {
-  
-  // cityStoredList = JSON.parse(localStorage.getItem("cityList"));
-
   if (JSON.parse(localStorage.getItem("cityList")) !== null) {
     cityStoredList = JSON.parse(localStorage.getItem("cityList"));
   } else {
@@ -72,22 +51,10 @@ function init() {
 }
 
 
-init()
 
 
 
-// function renderLastGrade() {
-//   // Use JSON.parse() to convert text to JavaScript object
-//   var lastGrade = JSON.parse(localStorage.getItem("studentGrade"));
-//   // Check if data is returned, if not exit out of the function
-//   if (lastGrade !== null) {
-//   document.getElementById("saved-name").innerHTML = lastGrade.student;
-//   document.getElementById("saved-grade").innerHTML = lastGrade.grade;
-//   document.getElementById("saved-comment").innerHTML = lastGrade.comment;
-//   } else {
-//     return;
-//   }
-// }
+
 
 var formSubmitHandler = function (event) {
   event.preventDefault();
@@ -95,10 +62,7 @@ var formSubmitHandler = function (event) {
   var cityNameEl = cityInputEl.value.trim();
 
   if (cityNameEl) {
-    // localStorage.setItem("Cty name", cityName);
-    
-    getUserRepos(cityNameEl);
-    
+    getCurrentRepo(cityNameEl);
     resultsWeather.textContent = '';
     cityInputEl.value = '';
   } else {
@@ -111,14 +75,14 @@ var buttonClickHandler = function (event) {
   var getCity = event.target.getAttribute('data-language');
 
   if (getCity) {
-    getUserRepos(getCity);
+    getCurrentRepo(getCity);
     resultsWeather.textContent = '';
   }
 };
 
 
 
-var getUserRepos = function (city) {
+var getCurrentRepo = function (city) {
 
   var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=metric";
 
@@ -133,22 +97,23 @@ var getUserRepos = function (city) {
         var currentHum = data.main.humidity;
         var currentLong = data.coord.lon;
         var currentLat = data.coord.lat;
-
+        var currentUnixTime  = moment.unix(data.dt);
+        var currentDate = moment(currentUnixTime).format('DD/MM/YYYY');
         var currentEl = document.createElement('div');
         currentEl.classList = 'current-container';
         currentEl.innerHTML = 
-          `<h2>${cityName} ${rightNow}<img src="http://openweathermap.org/img/w/${icon}.png"></h2> `
+          `<h2>${cityName} ${currentDate}<img src="http://openweathermap.org/img/w/${icon}.png"></h2> `
         resultsWeather.append(currentEl);
 
         currentListEl.innerHTML = 
           `<li>Temp: ${currentTemp} °C</li>
           <li>Wind: ${windSpeed} KPH</li>
-          <li>Humidity: ${currentHum} %</li>  `
+          <li>Humidity: ${currentHum} %</li> `
       
         currentEl.append(currentListEl);
         renderData(currentLong, currentLat);
         storeCity (cityName);
-        createBtn (cityName);
+        
       })
     });
 
@@ -199,7 +164,7 @@ var displayForcast = function (repos) {
   forcastEl.classList = 'forcast-container';
   resultsWeather.append(forcastEl);
 
-  for (var i = 0; i < 5; i++) {
+  for (var i = 1; i < 6; i++) {
     
     var forDate = repos[i].temp.day;
     var forIcon = repos[i].weather[0].icon;
@@ -231,7 +196,6 @@ function createBtn (cityName) {
   
   var btnText = cityName;
   var addBtn = document.createElement('button');
-  // addBtn.className = 'btn';
   addBtn.textContent = btnText;
   addBtn.setAttribute("class", "btn");
   addBtn.setAttribute("data-language", cityName);
@@ -245,4 +209,4 @@ userFormEl.addEventListener('submit', formSubmitHandler);
 cityButtonsEl.addEventListener('click', buttonClickHandler);
 
 
-// init()
+init()
