@@ -71,7 +71,7 @@ var buttonClickHandler = function (event) {
 // Calls API with city name query search, returns city name, long & lat to use to call next API
 var getCurrentRepo = function (city) {
 
-  var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=metric";
+  var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=metric";
 
   fetch(queryURL)
     .then(function (response) {
