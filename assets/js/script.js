@@ -40,7 +40,6 @@ function renderStoredcity () {
  }
 }
 
-
 function init() {
   if (JSON.parse(localStorage.getItem("cityList")) !== null) {
     cityStoredList = JSON.parse(localStorage.getItem("cityList"));
@@ -49,11 +48,6 @@ function init() {
   }
   renderStoredcity ()
 }
-
-
-
-
-
 
 
 var formSubmitHandler = function (event) {
