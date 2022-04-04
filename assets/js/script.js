@@ -101,7 +101,7 @@ var getCurrentRepo = function (city) {
         var currentEl = document.createElement('div');
         currentEl.classList = 'current-container';
         currentEl.innerHTML = 
-          `<h2>${cityName} ${currentDate}<img src="http://openweathermap.org/img/w/${icon}.png"></h2> `
+          `<h2>${cityName} ${currentDate}<img src="https://openweathermap.org/img/w/${icon}.png"></h2> `
         resultsWeather.append(currentEl);
         var currentListEl = document.createElement('ul');
         currentListEl.classList = 'current-list';
@@ -163,7 +163,7 @@ var displayForcast = function (repos) {
     forcastListEl.innerHTML =  
     `<h4>${forDate}</h4>
       <ul>
-        <li><img src="http://openweathermap.org/img/w/${forIcon}.png"></li>
+        <li><img src="https://openweathermap.org/img/w/${forIcon}.png"></li>
         <li>Temp: ${forTemp} °C</li>
         <li>Wind: ${forWind} KPH</li>
         <li>Humidity: ${forHumid} %</li>
