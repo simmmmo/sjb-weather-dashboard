@@ -13,29 +13,29 @@
   <title>Weather Dashboard</title>
 </head>
 
-<body class="flex-column min-100-vh">
-  <header class="hero">
-    <h1 class="header-title">Weather Dashboard</h1>
-  </header>
+  <body class="flex-column min-100-vh">
+    <header class="hero">
+      <h1 class="header-title">Weather Dashboard</h1>
+    </header>
 
-  <main class="row gap">
-    <div class="column-search">
-     <div class="card">
-      <h3 class="card-header">Search for a city:</h3>
-      <form id="user-form" class="card-body">
-        <input name="username" id="username" type="text" autofocus="true" class="form-input" placeholder="Please enter a city"/>
-        <button type="submit" class="btn-search">Search</button>
-        <hr>
-      </form>
-      <div id="city-buttons" class="card-body"></div>
+    <main class="row gap">
+      <div class="column-search">
+        <div class="card">
+          <h3 class="card-header">Search for a city:</h3>
+          <form id="user-form" class="card-body">
+            <input name="city-name" id="city-name" type="text" autofocus="true" class="form-input" placeholder="Please enter a city"/>
+            <button type="submit" class="btn-search">Search</button>
+            <hr>
+          </form>
+          <div id="city-buttons" class="card-body"></div>
+        </div>
       </div>
-    </div>
-    <div class="column-weather">
-      <div id="card-weather">
+      <div class="column-weather">
+        <div id="card-weather">
+        </div>
       </div>
-    </div>
-  </main>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
-  <script src="./assets/js/script.js"></script>
-</body>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script src="./assets/js/script.js"></script>
+  </body>
 </html> 

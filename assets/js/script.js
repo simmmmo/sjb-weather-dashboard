@@ -1,20 +1,13 @@
-
-
 var userFormEl = document.querySelector('#user-form');
 var cityButtonsEl = document.querySelector('#city-buttons');
-var cityInputEl = document.querySelector('#username');
-
+var cityInputEl = document.querySelector('#city-name');
 var resultsWeather = document.querySelector('#card-weather');
 
-
-var rightNow = moment().format('DD/MM/YYYY');  
-var currentListEl = document.createElement('ul');
-currentListEl.classList = 'current-list';
-
+// Set API key variable to use to call API
 var APIKey = "aa82d8e67049c580a964573e4eb0645c";
-
 var cityStoredList = [];
 
+// Store last searched city name. Checks for duplicates 
 function storeCity (saveName) {
   cityStoredList = JSON.parse(localStorage.getItem("cityList"));
   if (cityStoredList.indexOf(saveName) == -1) {
@@ -24,7 +17,7 @@ function storeCity (saveName) {
   localStorage.setItem("cityList", JSON.stringify(cityStoredList));
 };
 
-
+// Pulls previous searched city names form local storage and creates button elements
 function renderStoredcity () {
   cityButtonsEl.innerHTML = "";
 
@@ -40,6 +33,7 @@ function renderStoredcity () {
  }
 }
 
+// Funciton on page load to call saved city names
 function init() {
   if (JSON.parse(localStorage.getItem("cityList")) !== null) {
     cityStoredList = JSON.parse(localStorage.getItem("cityList"));
@@ -49,7 +43,7 @@ function init() {
   renderStoredcity ()
 }
 
-
+// Form input funnction 
 var formSubmitHandler = function (event) {
   event.preventDefault();
 
@@ -64,7 +58,7 @@ var formSubmitHandler = function (event) {
   }
 };
 
-
+// Creates new API call from saved city buttons
 var buttonClickHandler = function (event) {
   var getCity = event.target.getAttribute('data-language');
 
@@ -74,8 +68,7 @@ var buttonClickHandler = function (event) {
   }
 };
 
-
-
+// Calls API with city name query search, returns city name, long & lat to use to call next API
 var getCurrentRepo = function (city) {
 
   var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=metric";
@@ -83,42 +76,41 @@ var getCurrentRepo = function (city) {
   fetch(queryURL)
     .then(function (response) {
       response.json().then(function (data) {
-        
         var cityName = data.name;
-        var icon = data.weather[0].icon;
-        var currentTemp = data.main.temp;
-        var windSpeed = data.wind.speed;
-        var currentHum = data.main.humidity;
         var currentLong = data.coord.lon;
         var currentLat = data.coord.lat;
-        var currentUnixTime  = moment.unix(data.dt);
+        renderData(cityName, currentLong, currentLat);
+        storeCity (cityName);
+      })
+    });
+  
+  // Calls API using long & lat to return data values for current and forecast weather data 
+  var renderData = function (cityName, long, lat) {
+    var queryForcastURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat +"&lon=" + long +"&exclude=minutely,hourly,alerts&appid=" + APIKey + "&units=metric";
+
+    fetch(queryForcastURL)
+    .then(function (response) {
+      response.json().then(function (forecastData) {
+        var currentUnixTime  = moment.unix(forecastData.current.dt);
         var currentDate = moment(currentUnixTime).format('DD/MM/YYYY');
+        var icon = forecastData.current.weather[0].icon;
+        var currentTemp = forecastData.current.temp;
+        var windSpeed = forecastData.current.wind_speed;
+        var currentHum = forecastData.current.humidity;
+        var currentUv = forecastData.current.uvi;
         var currentEl = document.createElement('div');
         currentEl.classList = 'current-container';
         currentEl.innerHTML = 
           `<h2>${cityName} ${currentDate}<img src="http://openweathermap.org/img/w/${icon}.png"></h2> `
         resultsWeather.append(currentEl);
-
+        var currentListEl = document.createElement('ul');
+        currentListEl.classList = 'current-list';
         currentListEl.innerHTML = 
           `<li>Temp: ${currentTemp} °C</li>
           <li>Wind: ${windSpeed} KPH</li>
           <li>Humidity: ${currentHum} %</li> `
       
         currentEl.append(currentListEl);
-        renderData(currentLong, currentLat);
-        storeCity (cityName);
-        
-      })
-    });
-
-  var renderData = function (long, lat) {
-    var queryForcastURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat +"&lon=" + long +"&exclude=minutely,hourly,alerts&appid=" + APIKey + "&units=metric";
-
-    fetch(queryForcastURL)
-    .then(function (response) {
-      response.json().then(function (forecastData) {
-        var currentUv = forecastData.current.uvi;
-        
 
         var uvTitleEl = document.createElement('li');
         uvTitleEl.textContent = 'UV Index: ';
@@ -145,7 +137,7 @@ var getCurrentRepo = function (city) {
   }
 };
 
-
+// Create 5 day forecast elements 
 var displayForcast = function (repos) {
   
   var forcastTitleEl = document.createElement('div');
@@ -159,7 +151,6 @@ var displayForcast = function (repos) {
   resultsWeather.append(forcastEl);
 
   for (var i = 1; i < 6; i++) {
-    
     var forDate = repos[i].temp.day;
     var forIcon = repos[i].weather[0].icon;
     var forTemp = Math.round(repos[i].temp.max);
@@ -180,22 +171,18 @@ var displayForcast = function (repos) {
        
       forcastEl.appendChild(forcastListEl);
 
-    console.log(forcastEl)
-
-
+    
   }
 };
 
+// Creates button with city name value
 function createBtn (cityName) {
-  
   var btnText = cityName;
   var addBtn = document.createElement('button');
   addBtn.textContent = btnText;
   addBtn.setAttribute("class", "btn");
   addBtn.setAttribute("data-language", cityName);
   cityButtonsEl.prepend(addBtn);
-  console.log(addBtn)
-
 };
 
 
@@ -203,4 +190,4 @@ userFormEl.addEventListener('submit', formSubmitHandler);
 cityButtonsEl.addEventListener('click', buttonClickHandler);
 
 
-init()
+init();

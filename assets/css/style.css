@@ -179,12 +179,7 @@ hr {
 
 .forecast-item ul {
   font-size: 1.25em;
-    line-height: 2em;
-}
-
-.forecast-item ul {
-  font-size: 1.25em;
-    line-height: 2em;
+  line-height: 2em;
 }
 
 .forecast-item img {
@@ -212,8 +207,7 @@ hr {
   border-radius: 5px;
   color: #ffffff;
   }
-  
-  
+    
 .uv-very {
   background-color: #d1394a;
   padding: 2px 20px;
